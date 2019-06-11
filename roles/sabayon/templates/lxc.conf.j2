@@ -1,0 +1,5 @@
+{% if lxc_config | default(false) %}
+{{ lxc_config }}
+{% else %}
+lxc.cgroup2.use = @all
+{% endif %}

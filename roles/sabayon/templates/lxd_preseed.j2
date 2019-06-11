@@ -1,0 +1,37 @@
+{{ lxd_config | to_nice_yaml( indent=2, explicit_start=False, explicit_end=False ) }}
+
+{% if lxd_storage_pools | default(false) %}
+storage_pools:
+{{ lxd_storage_pools | to_nice_yaml( indent=2, explicit_start=False, explicit_end=False ) }}
+{% endif %}
+
+{% if lxd_networks | default(false) %}
+networks:
+{{ lxd_networks | to_nice_yaml( indent=2, explicit_start=False, explicit_end=False ) }}
+{% endif %}
+
+{% if lxd_profiles | default(false) %}
+profiles:
+{{ lxd_profiles | to_nice_yaml( indent=2, explicit_start=False, explicit_end=False ) }}
+{% endif %}
+
+{% if lxd_cluster == true %}
+{% if lxd_cluster_config | default(false) %}
+{{ lxd_cluster_config | to_nice_yaml( indent=2, explicit_start=False, explicit_end=False ) }}
+  {% if lxd_server_name | default(false) %}
+server_name: {{ lxd_server_name }}
+  {% else %}
+server_name: {{ ansible_hostname }}
+  {% endif %}
+{% else %}
+cluster:
+  enabled: true
+  {% if lxd_server_name | default(false) %}
+server_name: {{ lxd_server_name }}
+  {% else %}
+server_name: {{ ansible_hostname }}
+  {% endif %}
+{% endif %}
+{% endif %}
+
+# vim: filetype=yaml

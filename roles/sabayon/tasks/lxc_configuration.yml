@@ -1,0 +1,11 @@
+---
+# Author: Daniele Rondina, geaaru@sabayonlinux.org
+
+- name: "Configure /etc/lxc/lxc.conf file"
+  template:
+    src: lxc.conf.j2
+    dest: /etc/lxc/lxc.conf
+  tags:
+    - lxc_conf_override
+
+# vim: filetype=yaml

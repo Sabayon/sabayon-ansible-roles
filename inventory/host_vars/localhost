@@ -1,0 +1,7 @@
+---
+
+# Override lxd server name. Default ansible_hostname is used.
+# (to define on var of the specific host)
+# lxd_server_name: "mynode"
+
+# vim: filetype=yaml

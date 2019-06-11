@@ -1,0 +1,106 @@
+---
+# Author: Daniele Rondina, geaaru@sabayonlinux.org
+
+- name: Configure LXC stuff
+  import_role:
+    name: sabayon
+    tasks_from: lxc_configuration
+
+- name: "Create custom LXD service directory"
+  file:
+    path: /etc/systemd/system/lxd.service.d/
+    state: directory
+    recurse: yes
+  tags:
+    - systemd_stuff
+
+- name: "Create custom LXD service override.conf"
+  template:
+    src: lxd.service.conf.j2
+    dest: /etc/systemd/system/lxd.service.d/override.conf
+  tags:
+    - systemd_stuff
+
+- name: "Reload systemd"
+  systemd: daemon_reload=yes
+  tags:
+    - systemd_stuff
+
+- name: "Enable LXD SystemD service for initialize service"
+  systemd:
+    name: "lxd"
+    enabled: yes
+  tags:
+    - systemd_stuff
+
+- name: "Start LXD SystemD service for initialize service"
+  systemd:
+    name: "lxd"
+    state: started
+  tags:
+    - systemd_stuff
+
+- name: "Create preseed configuration file"
+  template:
+    src: lxd_preseed.j2
+    dest: /tmp/lxd_preseed
+  tags:
+    - lxd_bootstrap_node
+  when: ansible_hostname == lxd_bootstrap_node or not lxd_cluster
+
+- name: "Initialize lxd_cluster_node_iface"
+  set_fact:
+    lxd_cluster_node_iface: "{{ lxd_cluster_node_iface | default('eth0') }}"
+  tags:
+    - lxd_bootstrap_node
+  when: ansible_hostname != lxd_bootstrap_node and lxd_cluster
+
+- name: "Create preseed configuration file for add a node in cluster"
+  vars:
+    cluster_cert: "{{ lookup('file', '{{ lxd_cluster_cert_file }}') }}"
+    server_address: "{{ (hostvars[inventory_hostname]['ansible_' + lxd_cluster_node_iface ]).get('ipv4', {}).get('address') }}"
+  template:
+    src: lxd_preseed_node.j2
+    dest: /tmp/lxd_preseed
+  tags:
+    - lxd_bootstrap_node
+  when: ansible_hostname != lxd_bootstrap_node and lxd_cluster
+
+- name: "Dump lxd_preseed file"
+  shell: cat /tmp/lxd_preseed
+  register: lxd_preseed_cat
+  tags:
+    - lxd_bootstrap_node
+
+- name: "Preseed file"
+  debug:
+    msg: "lxd_preseed:\n{{ lxd_preseed_cat.stdout }}"
+  tags:
+    - lxd_bootstrap_node
+
+- name: "Initialize LXD bootstrap node"
+  shell: bash -c "cat /tmp/lxd_preseed | lxd init --preseed"
+  register: lxd_init_bootstrap
+  tags:
+    - lxd_bootstrap_node
+
+- name: "lxd init output"
+  debug:
+    msg: "lxd init --preseed:\n{{ lxd_init_bootstrap.stdout }}"
+  tags:
+    - lxd_bootstrap_node
+
+- name: "Retrieve LXD Cluster certificate"
+  shell: sed -e ':a;N;$!ba;s/\n/\n\n/g' /var/lib/lxd/server.crt > {{ lxd_cluster_cert_file }}
+  args:
+    warn: false
+  when: ansible_hostname == lxd_bootstrap_node and lxd_cluster
+
+- name: "Fetch LXD Cluster certificate"
+  fetch:
+    src: "{{ lxd_cluster_cert_file }}"
+    dest: "{{ lxd_cluster_cert_file }}"
+    flat: yes
+  when: ansible_hostname == lxd_bootstrap_node and lxd_cluster
+
+# vim: filetype=yaml

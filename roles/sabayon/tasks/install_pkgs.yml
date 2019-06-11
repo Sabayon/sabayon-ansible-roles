@@ -1,0 +1,21 @@
+---
+# Author: Daniele Rondina, geaaru@sabayonlinux.org
+# Description: Check if a specific package is present and if not install it.
+
+- name: "{{ package }}: Check if package is present"
+  shell: qlist -IC {{ package }} | grep "{{ package }}$" | wc -l
+  register: package_is_present
+
+- name: "{{ package }}: Present {{ package_is_present.stdout == '1' | bool }}"
+  debug:
+    msg: "Package {{ package }} is present: {{ ( package_is_present.stdout | int ) == 1 | bool }}"
+
+- name: "{{ package }}: Install package"
+  environment:
+    http_proxy: "{{ lxd_http_proxy | default('') }}"
+    https_proxy: "{{ lxd_https_proxy | default('') }}"
+    ACCEPT_LICENSE: '*'
+  shell: equo install {{ package }}
+  when: package_is_present.stdout == "0"
+
+

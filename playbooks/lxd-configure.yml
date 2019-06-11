@@ -1,0 +1,32 @@
+---
+
+- hosts:
+    - all
+  vars:
+     needed_pkgs:
+       - app-emulation/lxc
+       - app-emulation/lxc-templates
+       - sys-process/criu
+       - net-misc/bridge-utils
+       - net-dns/dnsmasq
+       - sys-fs/zfs
+       - app-arch/pxz
+       - app-emulation/lxd
+
+  tasks:
+
+    - name: "Install needed packages"
+      include_role:
+        name: sabayon
+        tasks_from: install_pkgs
+      loop_control:
+        loop_var: package
+      with_items:
+        - "{{ needed_pkgs }}"
+      tags:
+        - install_deps
+
+    - name: "Configure LXD service"
+      include_role:
+        name: sabayon
+        tasks_from: lxd_configuration

@@ -1,0 +1,16 @@
+cluster:
+  enabled: true
+  server_address: {{ server_address }}:{{ lxd_cluster_node_port | default('8443') }}
+  cluster_address: {{ lxd_cluster_address }}
+  cluster_password: {{ lxd_cluster_password }}
+  cluster_certificate: "{{ cluster_cert }}"
+  {% if lxd_server_name | default(false) %}
+server_name: {{ lxd_server_name }}
+  {% else %}
+server_name: {{ ansible_hostname }}
+  {% endif %}
+{% if lxd_member_config | default(false) %}
+{{ lxd_member_config | to_nice_yaml( indent=2, explicit_start=False, explicit_end=False) | indent(4, False)  }}
+{% endif %}
+
+# vim: filetype=yaml

@@ -1,0 +1,13 @@
+[Service]
+LimitNOFILE=infinity
+LimitNPROC=infinity
+Environment=LD_LIBRARY_PATH=/usr/lib/lxd/
+{% if lxd_http_proxy | default(false) %}
+Environment=http_proxy={{ lxd_http_proxy }}
+{% endif %}
+{% if lxd_https_proxy | default(false) %}
+Environment=https_proxy={{ lxd_https_proxy }}
+{% endif %}
+{% if lxd_no_proxy | default(false) %}
+Environment=no_proxy={{ lxd_no_proxy }}
+{% endif %}

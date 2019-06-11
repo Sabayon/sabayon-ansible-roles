@@ -1,0 +1,10 @@
+[sabayon-local]
+localhost
+
+[lxd]
+localhost
+
+[sabayon-local:vars]
+transport=local
+ansible_connection=local
+
