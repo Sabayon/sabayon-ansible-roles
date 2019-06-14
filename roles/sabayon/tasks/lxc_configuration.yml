@@ -8,4 +8,110 @@
   tags:
     - lxc_conf_override
 
+- name: "Touch /etc/subuid /etc/subgid"
+  shell: touch /etc/subuid /etc/subgid
+  args:
+    warn: false
+  tags:
+    - lxc_conf_override
+
+- name: "Create subuid"
+  shell: usermod --add-subuids {{ user.map }} {{ user.user }}
+  loop_control:
+    loop_var: user
+  with_items:
+    - "{{ lxc_subuids }}"
+  tags:
+    - lxc_conf_override
+
+- name: "Cat /etc/subuid"
+  shell: cat /etc/subgid
+  register: cat_subuids
+  tags:
+    - lxc_conf_override
+
+- name: "Show /etc/subgid"
+  debug:
+    msg: "/etc/subgid:\n{{ cat_subuids.stdout }}"
+
+- name: "Create subgid"
+  shell: usermod --add-subgids {{ user.map }} {{ user.user }}
+  loop_control:
+    loop_var: user
+  with_items:
+    - "{{ lxc_subuids }}"
+  tags:
+    - lxc_conf_override
+
+- name: "Cat /etc/subgids"
+  shell: cat /etc/subgid
+  register: cat_subgids
+  tags:
+    - lxc_conf_override
+
+- name: "Show /etc/subgids"
+  debug:
+    msg: "/etc/subgids:\n{{ cat_subgids.stdout }}"
+
+  # That last one is required because LXC needs it to access ~/.local/share/lxc/ after
+  # it switched to the mapped UIDs. If you’re using ACLs, you may instead use “u:100000:x”
+  # as a more specific ACL.
+- name: "Fix accesso to lxc directory"
+  shell: chmod +x {{ user.home }}
+  args:
+    warn: false
+  loop_control:
+    loop_var: user
+  with_items:
+    - "{{ lxc_subuids }}"
+  tags:
+    - lxc_conf_override
+
+- name: "Fix permission for /usr/bin/newuidmap"
+  shell: chmod 4755 /usr/bin/newuidmap
+  args:
+    warn: false
+  tags:
+    - lxc_conf_override
+
+- name: "Fix permission for /usr/bin/newgidmap"
+  shell: chmod 4755 /usr/bin/newgidmap
+  args:
+    warn: false
+  tags:
+    - lxc_conf_override
+
+- name: "Create custom LXCFS service directory"
+  file:
+    path: /etc/systemd/system/lxcfs.service.d/
+    state: directory
+    recurse: yes
+  tags:
+    - lxc_conf_override
+    - systemd_stuff
+
+- name: "Create custom LXCFS service override.conf"
+  template:
+    src: lxcfs.service.conf.j2
+    dest: /etc/systemd/system/lxcfs.service.d/override.conf
+  tags:
+    - systemd_stuff
+    - lxc_conf_override
+
+- name: "Enable LXCFS SystemD service for initialize service"
+  systemd:
+    name: "lxcfs"
+    enabled: yes
+  tags:
+    - systemd_stuff
+    - lxc_conf_override
+
+- name: "Start LXCFS SystemD service for initialize service"
+  systemd:
+    name: "lxcfs"
+    state: restarted
+  tags:
+    - systemd_stuff
+    - lxc_conf_override
+
 # vim: filetype=yaml

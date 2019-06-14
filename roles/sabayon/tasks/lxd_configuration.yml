@@ -33,10 +33,11 @@
   tags:
     - systemd_stuff
 
+# NOTE: after change of subuid/subgid it's needed restart LXD service.
 - name: "Start LXD SystemD service for initialize service"
   systemd:
     name: "lxd"
-    state: started
+    state: restarted
   tags:
     - systemd_stuff
 

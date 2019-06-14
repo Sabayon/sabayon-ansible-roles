@@ -5,6 +5,17 @@
 #lxc_config: |
 #  lxc.cgroup2.use = @all
 
+# Define the subuid/subguid to create
+lxc_subuids:
+  - user: root
+    home: /root
+    map: 100000-165535
+
+lxc_subgids:
+  - user: root
+    home: /root
+    map: 100000-165535
+
 # Create LXD cluster node (true) or standalone node (false)
 lxd_cluster: true
 
@@ -59,6 +70,8 @@ lxd_member_config:
 lxd_config:
   config:
     core.trust_password: mysecret
+    # It seems that for cluster it's better define the
+    # server interface used.
     core.https_address: "[::]:8443"
     images.auto_update_interval: 15
 

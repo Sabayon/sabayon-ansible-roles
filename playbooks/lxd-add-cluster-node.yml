@@ -28,7 +28,7 @@
     - name: "Configure LXD service"
       vars:
         lxd_cluster: true
-      include_role:
+      import_role:
         name: sabayon
         tasks_from: lxd_configuration
 

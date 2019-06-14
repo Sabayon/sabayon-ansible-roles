@@ -27,6 +27,6 @@
         - install_deps
 
     - name: "Configure LXD service"
-      include_role:
+      import_role:
         name: sabayon
         tasks_from: lxd_configuration
