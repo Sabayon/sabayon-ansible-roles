@@ -17,7 +17,7 @@ lxc_subgids:
     map: 100000-165535
 
 # Create LXD cluster node (true) or standalone node (false)
-lxd_cluster: true
+lxd_cluster: false
 
 # Override lxd server name. Default ansible_hostname is used.
 # (to define on var of the specific host)
