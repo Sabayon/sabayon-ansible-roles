@@ -126,6 +126,18 @@ If all packages are already available on target host it's possible avoid check d
 ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook --limit node1 playbooks/lxd-configure.yml  --skip-tags install_deps
 ```
 
+By default `lxd` group variables are configured for localhost node so for configure and bootstrap your LXD node
+it's needed only this:
+
+```bash
+$# sudo su
+$# equo i ansible
+$# git clone https://github.com/Sabayon/sabayon-ansible-roles
+$# cd sabayon-ansible-roles
+$# ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook playbooks/lxd-configure.yml
+$# # Now your node is configured with LXD!
+```
+
 ### Configure LXC stuff
 
 For configure only LXC stuff could be used this command:
@@ -135,7 +147,6 @@ For configure only LXC stuff could be used this command:
 ```
 
 ### Add new node to Cluster
-
 
 
 If not available fetch primary node cluster certificate on local host with:
