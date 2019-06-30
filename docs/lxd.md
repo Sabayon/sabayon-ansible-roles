@@ -138,6 +138,15 @@ $# ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook playbooks/lxd-configure.yml
 $# # Now your node is configured with LXD!
 ```
 
+** If you have already an installation of LXD it's better clean installation data: **
+
+```bash
+$# systemctl stop lxd
+$# rm -rf /var/lib/lxd/*
+$# ip link set down dev lxdbr0
+$# brctl del-br lxdbr0
+```
+
 ### Configure LXC stuff
 
 For configure only LXC stuff could be used this command:
