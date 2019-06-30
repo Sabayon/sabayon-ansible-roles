@@ -170,9 +170,27 @@ Add nodes to Cluster
   $# ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook   --limit node2,node3,node4 playbooks/lxd-add-cluster-node.yml
 ```
 
+### Create your first LXD Container
+
+After that playbook is executed you can enable access to LXD socket at your user:
+
+```bash
+$# sudo su && gpasswd -a <user> lxd
+```
+
+and then create your first container:
+
+```bash
+$# lxc image list images:
+$# lxc launch images:sabayon c1
+$# # For execute a container inside container
+$# lxc exec c1 /bin/bash
+```
+
 ## Playbooks Availables
 
 | Playbook | Description |
 |----------|-------------|
 |lxd-configure.yml | Create a Bootstrap Node of LXD Cluster or a Standalone node. |
 |lxd-add-cluster-node.yml | Add a node to an existing LXD Cluster. |
+
