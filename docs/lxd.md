@@ -130,10 +130,10 @@ By default `lxd` group variables are configured for localhost node so for config
 it's needed only this:
 
 ```bash
-$# sudo su
-$# equo i ansible
+$# sudo equo i ansible
 $# git clone https://github.com/Sabayon/sabayon-ansible-roles
 $# cd sabayon-ansible-roles
+$# sudo su
 $# ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook playbooks/lxd-configure.yml
 $# # Now your node is configured with LXD!
 ```
