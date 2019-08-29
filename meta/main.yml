@@ -1,0 +1,11 @@
+galaxy_info:
+  role_name: sabayon
+  author: Daniele Rondina
+  description: Sabayon OS Roles
+  license: GPLv3
+  min_ansible_version: 2.8.1
+  galaxy_tags:
+    - install_deps
+    - systemd_stuff
+    - lxd_boostrap_node
+    - lxc_conf_override
