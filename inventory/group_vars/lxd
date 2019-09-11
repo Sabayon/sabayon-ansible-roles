@@ -78,6 +78,13 @@ lxd_config:
 lxd_storage_pools:
   - name: default
     driver: dir
+# For BTRFS mountpoint
+# driver: btrfs
+# config:
+#   source: /your/btrfspath
+#   valatile.initial_source: /your/btrfspath
+#
+# See https://github.com/lxc/lxd/blob/master/doc/networks.md
 
 lxd_networks:
   - name: lxdbr0
