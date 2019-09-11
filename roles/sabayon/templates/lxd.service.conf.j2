@@ -1,5 +1,8 @@
 [Service]
-LimitNOFILE=infinity
+# See: https://github.com/lxc/lxd/issues/5449
+# For an issue of squasfs infinity is not handled correctly.
+# LimitNOFILE=infinity
+LimitNOFILE=20000
 LimitNPROC=infinity
 Environment=LD_LIBRARY_PATH=/usr/lib/lxd/
 {% if lxd_http_proxy | default(false) %}
