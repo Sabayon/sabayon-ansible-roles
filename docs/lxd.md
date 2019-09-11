@@ -144,8 +144,10 @@ $# # Now your node is configured with LXD!
 $# systemctl stop lxd
 $# rm -rf /var/lib/lxd/*
 $# ip link set down dev lxdbr0
-$# brctl del-br lxdbr0
+$# brctl delbr lxdbr0
 ```
+
+If it's used OVS the commands are different.
 
 ### Configure LXC stuff
 
