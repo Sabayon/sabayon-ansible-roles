@@ -82,6 +82,7 @@
 - name: "Initialize LXD bootstrap node"
   shell: bash -c "cat /tmp/lxd_preseed | lxd init --preseed"
   register: lxd_init_bootstrap
+  become: yes
   tags:
     - lxd_bootstrap_node
 
