@@ -33,6 +33,8 @@
 - name: "Show /etc/subgid"
   debug:
     msg: "/etc/subgid:\n{{ cat_subuids.stdout }}"
+  tags:
+    - lxc_conf_override
 
 - name: "Create subgid"
   shell: usermod --add-subgids {{ user.map }} {{ user.user }}
@@ -52,6 +54,8 @@
 - name: "Show /etc/subgids"
   debug:
     msg: "/etc/subgids:\n{{ cat_subgids.stdout }}"
+  tags:
+    - lxc_conf_override
 
   # That last one is required because LXC needs it to access ~/.local/share/lxc/ after
   # it switched to the mapped UIDs. If you’re using ACLs, you may instead use “u:100000:x”
