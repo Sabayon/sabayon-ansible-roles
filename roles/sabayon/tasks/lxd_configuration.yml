@@ -47,14 +47,14 @@
     dest: /tmp/lxd_preseed
   tags:
     - lxd_bootstrap_node
-  when: ansible_hostname == lxd_bootstrap_node or not lxd_cluster
+  when: not lxd_cluster or ansible_hostname == lxd_bootstrap_node
 
 - name: "Initialize lxd_cluster_node_iface"
   set_fact:
     lxd_cluster_node_iface: "{{ lxd_cluster_node_iface | default('eth0') }}"
   tags:
     - lxd_bootstrap_node
-  when: ansible_hostname != lxd_bootstrap_node and lxd_cluster
+  when: lxd_cluster and ansible_hostname != lxd_bootstrap_node
 
 - name: "Create preseed configuration file for add a node in cluster"
   vars:
@@ -65,7 +65,7 @@
     dest: /tmp/lxd_preseed
   tags:
     - lxd_bootstrap_node
-  when: ansible_hostname != lxd_bootstrap_node and lxd_cluster
+  when: lxd_cluster and ansible_hostname != lxd_bootstrap_node
 
 - name: "Dump lxd_preseed file"
   shell: cat /tmp/lxd_preseed
@@ -95,13 +95,13 @@
   shell: sed -e ':a;N;$!ba;s/\n/\n\n/g' /var/lib/lxd/server.crt > {{ lxd_cluster_cert_file }}
   args:
     warn: false
-  when: ansible_hostname == lxd_bootstrap_node and lxd_cluster
+  when: lxd_cluster and ansible_hostname == lxd_bootstrap_node
 
 - name: "Fetch LXD Cluster certificate"
   fetch:
     src: "{{ lxd_cluster_cert_file }}"
     dest: "{{ lxd_cluster_cert_file }}"
     flat: yes
-  when: ansible_hostname == lxd_bootstrap_node and lxd_cluster
+  when: lxd_cluster and ansible_hostname == lxd_bootstrap_node
 
 # vim: filetype=yaml
