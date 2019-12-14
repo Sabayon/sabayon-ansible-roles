@@ -2,6 +2,8 @@
 # Author: Daniele Rondina, geaaru@sabayonlinux.org
 
 - name: "Configure /etc/lxc/lxc.conf file"
+  become_method: sudo
+  become: yes
   template:
     src: lxc.conf.j2
     dest: /etc/lxc/lxc.conf
@@ -10,6 +12,8 @@
 
 - name: "Touch /etc/subuid /etc/subgid"
   shell: touch /etc/subuid /etc/subgid
+  become_method: sudo
+  become: yes
   args:
     warn: false
   tags:
@@ -17,6 +21,8 @@
 
 - name: "Create subuid"
   shell: usermod --add-subuids {{ user.map }} {{ user.user }}
+  become_method: sudo
+  become: yes
   loop_control:
     loop_var: user
   with_items:
@@ -38,6 +44,8 @@
 
 - name: "Create subgid"
   shell: usermod --add-subgids {{ user.map }} {{ user.user }}
+  become_method: sudo
+  become: yes
   loop_control:
     loop_var: user
   with_items:
@@ -62,6 +70,8 @@
   # as a more specific ACL.
 - name: "Fix accesso to lxc directory"
   shell: chmod +x {{ user.home }}
+  become: yes
+  become_method: sudo
   args:
     warn: false
   loop_control:
@@ -73,6 +83,8 @@
 
 - name: "Fix permission for /usr/bin/newuidmap"
   shell: chmod 4755 /usr/bin/newuidmap
+  become_method: sudo
+  become: yes
   args:
     warn: false
   tags:
@@ -80,12 +92,16 @@
 
 - name: "Fix permission for /usr/bin/newgidmap"
   shell: chmod 4755 /usr/bin/newgidmap
+  become_method: sudo
+  become: yes
   args:
     warn: false
   tags:
     - lxc_conf_override
 
 - name: "Create custom LXCFS service directory"
+  become_method: sudo
+  become: yes
   file:
     path: /etc/systemd/system/lxcfs.service.d/
     state: directory
@@ -95,6 +111,8 @@
     - systemd_stuff
 
 - name: "Create custom LXCFS service override.conf"
+  become_method: sudo
+  become: yes
   template:
     src: lxcfs.service.conf.j2
     dest: /etc/systemd/system/lxcfs.service.d/override.conf
@@ -103,6 +121,8 @@
     - lxc_conf_override
 
 - name: "Enable LXCFS SystemD service for initialize service"
+  become_method: sudo
+  become: yes
   systemd:
     name: "lxcfs"
     enabled: yes
@@ -111,6 +131,8 @@
     - lxc_conf_override
 
 - name: "Start LXCFS SystemD service for initialize service"
+  become_method: sudo
+  become: yes
   systemd:
     name: "lxcfs"
     state: restarted

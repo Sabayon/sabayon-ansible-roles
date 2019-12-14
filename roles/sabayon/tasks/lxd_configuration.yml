@@ -7,6 +7,8 @@
     tasks_from: lxc_configuration
 
 - name: "Create custom LXD service directory"
+  become_method: sudo
+  become: yes
   file:
     path: /etc/systemd/system/lxd.service.d/
     state: directory
@@ -15,6 +17,8 @@
     - systemd_stuff
 
 - name: "Create custom LXD service override.conf"
+  become_method: sudo
+  become: yes
   template:
     src: lxd.service.conf.j2
     dest: /etc/systemd/system/lxd.service.d/override.conf
@@ -22,11 +26,15 @@
     - systemd_stuff
 
 - name: "Reload systemd"
+  become_method: sudo
+  become: yes
   systemd: daemon_reload=yes
   tags:
     - systemd_stuff
 
 - name: "Enable LXD SystemD service for initialize service"
+  become_method: sudo
+  become: yes
   systemd:
     name: "lxd"
     enabled: yes
@@ -35,6 +43,8 @@
 
 # NOTE: after change of subuid/subgid it's needed restart LXD service.
 - name: "Start LXD SystemD service for initialize service"
+  become_method: sudo
+  become: yes
   systemd:
     name: "lxd"
     state: restarted
@@ -82,6 +92,7 @@
 - name: "Initialize LXD bootstrap node"
   shell: bash -c "cat /tmp/lxd_preseed | lxd init --preseed"
   register: lxd_init_bootstrap
+  become_method: sudo
   become: yes
   tags:
     - lxd_bootstrap_node
@@ -93,6 +104,8 @@
     - lxd_bootstrap_node
 
 - name: "Retrieve LXD Cluster certificate"
+  become_method: sudo
+  become: yes
   shell: sed -e ':a;N;$!ba;s/\n/\n\n/g' /var/lib/lxd/server.crt > {{ lxd_cluster_cert_file }}
   args:
     warn: false

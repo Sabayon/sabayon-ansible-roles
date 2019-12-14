@@ -16,6 +16,8 @@
     https_proxy: "{{ lxd_https_proxy | default('') }}"
     ACCEPT_LICENSE: '*'
   shell: equo install {{ package }}
+  become_method: sudo
+  become: yes
   when: package_is_present.stdout == "0"
 
 
